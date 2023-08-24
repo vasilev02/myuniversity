@@ -1,13 +1,19 @@
 package com.lead.consult.interview.model;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Data
+@Entity
+@NoArgsConstructor
 public class Course {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @Column(name = "type", nullable = false)
     private CourseType type;
 
     @Column(name = "name", nullable = false)
@@ -17,5 +23,4 @@ public class Course {
         this.type = type;
         this.name = name;
     }
-
 }

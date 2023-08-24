@@ -1,30 +1,30 @@
 package com.lead.consult.interview.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@MappedSuperclass
+@NoArgsConstructor
 public abstract class Person {
 
     protected Person(String name, int age, String group) {
         this.name = name;
         this.age = age;
-        this.group = group;
+        this.groupName = group;
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected int id;
 
     @Column(name = "name", nullable = false)
-    private final String name;
+    protected String name;
 
     @Column(name = "age", nullable = false)
-    private final int age;
+    protected int age;
 
-    @Column(name = "name", nullable = false)
-    private final String group;
+    @Column(name = "groupName", nullable = false)
+    protected String groupName;
 }

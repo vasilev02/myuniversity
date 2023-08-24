@@ -1,6 +1,5 @@
 package com.lead.consult.interview.service.implementations;
 
-import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.Teacher;
 import com.lead.consult.interview.repository.TeacherRepository;
 import com.lead.consult.interview.service.interfaces.TeacherService;
@@ -8,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private TeacherRepository repository;
+    private final TeacherRepository repository;
 
     @Autowired
     public TeacherServiceImpl(TeacherRepository repository) {
@@ -21,26 +22,50 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> getAllTeachers() {
-        return null;
+        return this.repository.findAll();
     }
 
     @Override
-    public Teacher getTeacherById(int id) {
-        return null;
+    public Optional<Teacher> getTeacherById(int id) {
+        return this.repository.findById(id);
     }
 
     @Override
-    public Teacher deleteTeacherById(int id) {
-        return null;
+    public void deleteTeacherById(int id) {
+        this.repository.deleteById(id);
     }
 
     @Override
     public Teacher updateTeacherById(Teacher teacher) {
-        return null;
+        return this.repository.save(teacher);
     }
 
     @Override
-    public List<Teacher> getTeachersByCourse(Course course) {
-        return null;
+    public List<Teacher> getTeachersByCourseName(String courseName) {
+        return this.getAllTeachers()
+                .stream()
+                .filter(teacher -> teacher.getCourses().stream().anyMatch(entry -> entry.getName().equals(courseName))).toList();
+    }
+
+    @Override
+    public List<Teacher> getTeachersByGroupName(String groupName) {
+        return this.getAllTeachers()
+                .stream()
+                .filter(teacher -> teacher.getGroupName().equals(groupName)).toList();
+    }
+
+    @Override
+    public List<Teacher> getTeachersByCourseAndGroupNames(String courseName, String groupName) {
+        Predicate<Teacher> teacherPredicate = e -> e.getGroupName().equals(groupName) && e.getCourses().stream().
+                anyMatch(course -> course.getName().equals(courseName));
+
+        return this.getAllTeachers().stream().filter(teacherPredicate).toList();
+    }
+
+    @Override
+    public List<Teacher> getTeachersByCourseNameAndAge(String courseName, Integer age) {
+        Predicate<Teacher> teacherPredicate = e -> e.getAge() <= age && e.getCourses().stream().
+                anyMatch(course -> course.getName().equals(courseName));
+        return this.getAllTeachers().stream().filter(teacherPredicate).toList();
     }
 }
