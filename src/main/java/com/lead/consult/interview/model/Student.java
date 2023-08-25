@@ -24,12 +24,4 @@ public class Student extends Person {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Course> courses;
 
-    public void addCourse(Course course) {
-        this.courses.add(course);
-    }
-
-    public void removeCourse(Course course) {
-        this.courses.remove(course);
-    }
-
 }

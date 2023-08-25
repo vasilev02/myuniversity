@@ -27,10 +27,13 @@ public class CourseController {
         return new ResponseEntity<>(this.service.getAllCourses(), HttpStatus.OK);
     }
 
-    @GetMapping("/filterByType")
-    @ResponseBody
-    public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type){
-        return new ResponseEntity<>(this.service.getCoursesByType(type), HttpStatus.OK);
+    @PostMapping()
+    public ResponseEntity<Course> create(@RequestBody Course course){
+        Course courseToAdd = this.service.createCourse(course);
+        if(courseToAdd==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -43,15 +46,14 @@ public class CourseController {
         }
     }
 
-    @PostMapping()
-    public ResponseEntity<Course> create(@RequestBody Course course){
-        Course courseToAdd = this.service.createCourse(course);
-        if(courseToAdd==null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Course> deleteById(@PathVariable int id){
+        Optional<Course> course = this.service.deleteCourseById(id);
+        if(course.isPresent()){
+            return new ResponseEntity<>(course.get(),HttpStatus.OK);
         }
-        return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
     @PostMapping("/update")
     public ResponseEntity<Course> update(@RequestBody Course course){
@@ -62,13 +64,10 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Course> deleteById(@PathVariable int id){
-        Optional<Course> course = this.service.deleteCourseById(id);
-        if(course.isPresent()){
-            return new ResponseEntity<>(course.get(),HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/filterByType")
+    @ResponseBody
+    public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type){
+        return new ResponseEntity<>(this.service.getCoursesByType(type), HttpStatus.OK);
     }
 
 }

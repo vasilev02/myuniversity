@@ -26,7 +26,26 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public Course createCourse(Course course) {
+        if(this.checkIfCourseTypeIsCorrect(course) && this.checkIfCourseNotExist(course)){
+            return this.repository.saveAndFlush(course);
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<Course> getCourseById(int id) {
+        return this.repository.findById(id);
+    }
+
+    @Override
     public Course update(Course course) {
+        if(!this.checkIfCourseTypeIsCorrect(course) && this.checkIfCourseNotExist(course)){
+            return null;
+        }
+        if(this.checkIfCourseNotExist(course)){
+            return null;
+        }
         Optional<Course> courseToUpdate = this.repository.findById(course.getId());
         if (courseToUpdate.isPresent()) {
             Course temp = courseToUpdate.get();
@@ -35,19 +54,6 @@ public class CourseServiceImpl implements CourseService {
             return this.repository.saveAndFlush(temp);
         }
         return null;
-    }
-
-    @Override
-    public Course createCourse(Course course) {
-        if(course.getType().equals(CourseType.MAIN) || course.getType().equals(CourseType.SECONDARY)){
-            return this.repository.saveAndFlush(course);
-        }
-       return null;
-    }
-
-    @Override
-    public Optional<Course> getCourseById(int id) {
-        return this.repository.findById(id);
     }
 
     @Override
@@ -64,4 +70,19 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getCoursesByType(CourseType type) {
         return this.getAllCourses().stream().filter(course -> course.getType().equals(type)).toList();
     }
+
+    private boolean checkIfCourseTypeIsCorrect(Course course){
+        if(course.getType().equals(CourseType.MAIN) || course.getType().equals(CourseType.SECONDARY)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfCourseNotExist(Course course){
+        if(this.repository.findCourseByNameAndType(course.getName(), course.getType()) != null){
+            return false;
+        }
+        return true;
+    }
+
 }

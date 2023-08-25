@@ -1,5 +1,6 @@
 package com.lead.consult.interview.controller;
 
+import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.Student;
 import com.lead.consult.interview.service.interfaces.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class StudentController {
         if (student.isPresent()){
             return new ResponseEntity<>(student.get(), HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -77,5 +78,21 @@ public class StudentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/addCourse/{id}")
+    public ResponseEntity<Student> addCourseToStudent(@PathVariable int id, @RequestBody Course course){
+        Student student = this.service.addCourse(id, course);
+        if(student==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    }
 
+    @PostMapping("/removeCourse/{id}")
+    public ResponseEntity<Student> removeCourseToStudent(@PathVariable int id, @RequestBody Course course){
+        Student student = this.service.removeCourse(id, course);
+        if(student==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    }
 }
