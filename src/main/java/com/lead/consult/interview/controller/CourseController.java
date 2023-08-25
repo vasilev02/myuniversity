@@ -39,29 +39,36 @@ public class CourseController {
         if (course.isPresent()){
             return new ResponseEntity<>(course.get(), HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping()
     public ResponseEntity<Course> create(@RequestBody Course course){
-        return new ResponseEntity<>(this.service.createCourse(course), HttpStatus.CREATED);
+        Course courseToAdd = this.service.createCourse(course);
+        if(courseToAdd==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
     }
 
-    /**
-     *
-     * @param course
-     * @return
-     */
+
     @PostMapping("/update")
     public ResponseEntity<Course> update(@RequestBody Course course){
-        return new ResponseEntity<>(this.service.update(course), HttpStatus.CREATED);
+        Course courseToUpdate = this.service.update(course);
+        if(courseToUpdate!=null){
+            return new ResponseEntity<>(courseToUpdate, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Course> deleteById(@PathVariable int id){
-        this.service.deleteCourseById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Optional<Course> course = this.service.deleteCourseById(id);
+        if(course.isPresent()){
+            return new ResponseEntity<>(course.get(),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

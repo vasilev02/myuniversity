@@ -4,7 +4,6 @@ import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.CourseType;
 import com.lead.consult.interview.repository.CourseRepository;
 import com.lead.consult.interview.service.interfaces.CourseService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,21 +27,22 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course update(Course course) {
-        Optional<Course> course1 = this.repository.findById(course.getId());
-        if (course1.isPresent()) {
-            Course temp = course1.get();
+        Optional<Course> courseToUpdate = this.repository.findById(course.getId());
+        if (courseToUpdate.isPresent()) {
+            Course temp = courseToUpdate.get();
             temp.setType(course.getType());
             temp.setName(course.getName());
             return this.repository.saveAndFlush(temp);
-        } else {
-            throw new EntityNotFoundException("There is no course with ID:" + course.getId());
         }
-
+        return null;
     }
 
     @Override
     public Course createCourse(Course course) {
-       return this.repository.saveAndFlush(course);
+        if(course.getType().equals(CourseType.MAIN) || course.getType().equals(CourseType.SECONDARY)){
+            return this.repository.saveAndFlush(course);
+        }
+       return null;
     }
 
     @Override
@@ -51,8 +51,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourseById(int id) {
-        this.repository.deleteById(id);
+    public Optional<Course> deleteCourseById(int id) {
+        Optional<Course> course = this.getCourseById(id);
+        if(course.isPresent()){
+            this.repository.deleteById(id);
+            return course;
+        }
+        return Optional.empty();
     }
 
     @Override

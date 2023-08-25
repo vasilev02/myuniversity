@@ -16,7 +16,7 @@ public interface CourseService {
 
     Optional<Course> getCourseById(int id);
 
-    void deleteCourseById(int id);
+    Optional<Course> deleteCourseById(int id);
 
     List<Course> getCoursesByType(CourseType type);
 

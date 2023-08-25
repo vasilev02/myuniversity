@@ -22,7 +22,6 @@ public class Student extends Person {
     private int grade;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-
     private List<Course> courses;
 
     public void addCourse(Course course) {
