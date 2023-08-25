@@ -3,6 +3,7 @@ package com.lead.consult.interview.service.implementations;
 import com.lead.consult.interview.model.Student;
 import com.lead.consult.interview.repository.StudentRepository;
 import com.lead.consult.interview.service.interfaces.StudentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public Student createStudent(Student student) {
+        return this.repository.saveAndFlush(student);
+    }
+
+    @Override
     public Optional<Student> getStudentById(int id) {
         return this.repository.findById(id);
     }
@@ -38,7 +44,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student updateStudentById(Student student) {
-        return this.repository.save(student);
+        Optional<Student> student1 = this.repository.findById(student.getId());
+        if (student1.isPresent()) {
+            Student temp = student1.get();
+            temp.setName(student.getName());
+            temp.setGrade(student.getGrade());
+            temp.setAge(student.getAge());
+            temp.setGroupName(student.getGroupName());
+            temp.setCourses(student.getCourses());
+            return this.repository.saveAndFlush(temp);
+        } else {
+            throw new EntityNotFoundException("There is no course with ID:" + student.getId());
+        }
     }
 
     @Override
