@@ -21,7 +21,7 @@ public class Student extends Person {
     @Column(name = "grade", nullable = false)
     private int grade;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Course> courses;
 
 }

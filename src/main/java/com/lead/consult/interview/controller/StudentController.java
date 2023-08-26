@@ -27,7 +27,6 @@ public class StudentController {
         return new ResponseEntity<>(this.service.getAllStudents(), HttpStatus.OK);
     }
 
-
     @PostMapping()
     public ResponseEntity<Student> createStudent(@RequestBody Student student){
         return new ResponseEntity<>(this.service.createStudent(student), HttpStatus.CREATED);
@@ -67,7 +66,7 @@ public class StudentController {
         return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/update")
     public ResponseEntity<Student> update(@RequestBody Student student){
         return new ResponseEntity<>(this.service.updateStudentById(student), HttpStatus.OK);
     }

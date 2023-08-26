@@ -16,7 +16,7 @@ public abstract class Person {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
 
     @Column(name = "name", nullable = false)

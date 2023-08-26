@@ -4,6 +4,7 @@ import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.CourseType;
 import com.lead.consult.interview.repository.CourseRepository;
 import com.lead.consult.interview.service.interfaces.CourseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,24 +28,25 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(Course course) {
-        if(this.checkIfCourseTypeIsCorrect(course) && this.checkIfCourseNotExist(course)){
+        if(this.checkIfCourseTypeIsCorrect(course) && !this.checkIfCourseExist(course)){
             return this.repository.saveAndFlush(course);
         }
-        return null;
+        throw new IllegalArgumentException("You are trying to create course with same type and name!");
     }
 
     @Override
     public Optional<Course> getCourseById(int id) {
-        return this.repository.findById(id);
+        Optional<Course> courseFromDB = this.repository.findById(id);
+        if(courseFromDB.isEmpty()){
+            throw new EntityNotFoundException("There is no course in the database with that ID - " + id);
+        }
+        return courseFromDB;
     }
 
     @Override
     public Course update(Course course) {
-        if(!this.checkIfCourseTypeIsCorrect(course) && this.checkIfCourseNotExist(course)){
-            return null;
-        }
-        if(this.checkIfCourseNotExist(course)){
-            return null;
+        if(!this.checkIfCourseTypeIsCorrect(course) || this.checkIfCourseExist(course)){
+            throw new IllegalArgumentException("You are trying to update course with identical properties!");
         }
         Optional<Course> courseToUpdate = this.repository.findById(course.getId());
         if (courseToUpdate.isPresent()) {
@@ -63,7 +65,7 @@ public class CourseServiceImpl implements CourseService {
             this.repository.deleteById(id);
             return course;
         }
-        return Optional.empty();
+        throw new EntityNotFoundException("There is no course in the database with that ID - " + id);
     }
 
     @Override
@@ -78,11 +80,11 @@ public class CourseServiceImpl implements CourseService {
         return false;
     }
 
-    private boolean checkIfCourseNotExist(Course course){
+    private boolean checkIfCourseExist(Course course){
         if(this.repository.findCourseByNameAndType(course.getName(), course.getType()) != null){
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

@@ -2,6 +2,7 @@ package com.lead.consult.interview.controller;
 
 import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.CourseType;
+import com.lead.consult.interview.exception.ApiException;
 import com.lead.consult.interview.service.interfaces.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,46 +29,53 @@ public class CourseController {
     }
 
     @PostMapping()
-    public ResponseEntity<Course> create(@RequestBody Course course){
-        Course courseToAdd = this.service.createCourse(course);
-        if(courseToAdd==null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> create(@RequestBody Course course){
+        try {
+            Course courseToAdd = this.service.createCourse(course);
+            return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
+        }catch (Exception e){
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-        return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> getById(@PathVariable int id){
-        Optional<Course> course = this.service.getCourseById(id);
-        if (course.isPresent()){
+    public ResponseEntity<Object> getById(@PathVariable int id){
+        try {
+            Optional<Course> course = this.service.getCourseById(id);
             return new ResponseEntity<>(course.get(), HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Course> deleteById(@PathVariable int id){
-        Optional<Course> course = this.service.deleteCourseById(id);
-        if(course.isPresent()){
+    public ResponseEntity<Object> deleteById(@PathVariable int id){
+        try {
+            Optional<Course> course = this.service.deleteCourseById(id);
             return new ResponseEntity<>(course.get(),HttpStatus.OK);
+        }catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Course> update(@RequestBody Course course){
-        Course courseToUpdate = this.service.update(course);
-        if(courseToUpdate!=null){
+    public ResponseEntity<Object> update(@RequestBody Course course){
+        try {
+            Course courseToUpdate = this.service.update(course);
             return new ResponseEntity<>(courseToUpdate, HttpStatus.CREATED);
+        }catch (Exception e){
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/filterByType")
     @ResponseBody
     public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type){
         return new ResponseEntity<>(this.service.getCoursesByType(type), HttpStatus.OK);
+    }
+
+    private ResponseEntity<Object> buildResponseEntity(ApiException exception) {
+        return new ResponseEntity<>(exception, exception.getStatus());
     }
 
 }

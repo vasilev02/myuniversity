@@ -25,7 +25,6 @@ public class StudentServiceImpl implements StudentService {
         this.courseRepository = courseRepository;
     }
 
-
     @Override
     public List<Student> getAllStudents() {
         return this.studentRepository.findAll();
@@ -109,12 +108,17 @@ public class StudentServiceImpl implements StudentService {
 
         for (int i = 0; i < courses.size(); i++) {
             Course currentCourse = courses.get(i);
-            if(currentCourse.getName().equals(course.getName())){
+            if(currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())){
                 return null;
             }
         }
         courses.add(courseToAdd);
         this.studentRepository.saveAndFlush(student);
+
+        List<Student> students = courseToAdd.getStudents();
+        students.add(student);
+        courseToAdd.setStudents(students);
+        this.courseRepository.saveAndFlush(courseToAdd);
         return student;
     }
 
@@ -135,8 +139,10 @@ public class StudentServiceImpl implements StudentService {
 
         for (int i = 0; i < courses.size(); i++) {
             Course currentCourse = courses.get(i);
-            if(currentCourse.getName().equals(course.getName())){
+            if(currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())){
                 courses.remove(courseToRemove);
+                courseToRemove.getStudents().remove(student);
+                courseRepository.saveAndFlush(courseToRemove);
                 this.studentRepository.saveAndFlush(student);
                 break;
             }
