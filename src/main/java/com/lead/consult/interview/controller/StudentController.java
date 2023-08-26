@@ -1,5 +1,6 @@
 package com.lead.consult.interview.controller;
 
+import com.lead.consult.interview.exception.ApiException;
 import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.Student;
 import com.lead.consult.interview.service.interfaces.StudentService;
@@ -23,75 +24,90 @@ public class StudentController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Student>> getAllStudents(){
+    public ResponseEntity<List<Student>> getAllStudents() {
         return new ResponseEntity<>(this.service.getAllStudents(), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Student> createStudent(@RequestBody Student student){
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
         return new ResponseEntity<>(this.service.createStudent(student), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getById(@PathVariable int id){
-        Optional<Student> student = this.service.getStudentById(id);
-        if (student.isPresent()){
+    public ResponseEntity<Object> getById(@PathVariable int id) {
+        try {
+            Optional<Student> student = this.service.getStudentById(id);
             return new ResponseEntity<>(student.get(), HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteById(@PathVariable int id) {
+        try {
+            Optional<Student> student = this.service.deleteStudentById(id);
+            return new ResponseEntity<>(student.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<Object> update(@RequestBody Student student) {
+        try {
+            Student studentToUpdate = this.service.updateStudentById(student);
+            return new ResponseEntity<>(studentToUpdate, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @GetMapping("/getByCourseName")
-    public ResponseEntity<List<Student>> getByCourseName(@RequestParam String courseName){
+    public ResponseEntity<List<Student>> getByCourseName(@RequestParam String courseName) {
         List<Student> studentsByCourseName = this.service.getStudentsByCourseName(courseName);
         return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
     }
 
     @GetMapping("/getByGroupName")
-    public ResponseEntity<List<Student>> getByGroupName(@RequestParam String groupName){
+    public ResponseEntity<List<Student>> getByGroupName(@RequestParam String groupName) {
         List<Student> studentsByCourseName = this.service.getStudentsByGroupName(groupName);
         return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
     }
 
     @GetMapping("/getByCourseAndGroupName")
-    public ResponseEntity<List<Student>> getByCourseAndGroupNames(@RequestParam String courseName,@RequestParam String groupName){
-        List<Student> studentsByCourseName = this.service.getStudentsByCourseAndGroupNames(courseName,groupName);
+    public ResponseEntity<List<Student>> getByCourseAndGroupNames(@RequestParam String courseName, @RequestParam String groupName) {
+        List<Student> studentsByCourseName = this.service.getStudentsByCourseAndGroupNames(courseName, groupName);
         return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
     }
 
     @GetMapping("/getByCourseNameAndAge")
-    public ResponseEntity<List<Student>> getByCourseNameAndAge(@RequestParam String courseName,@RequestParam int age){
-        List<Student> studentsByCourseName = this.service.getStudentsByCourseNameAndAge(courseName,age);
+    public ResponseEntity<List<Student>> getByCourseNameAndAge(@RequestParam String courseName, @RequestParam int age) {
+        List<Student> studentsByCourseName = this.service.getStudentsByCourseNameAndAge(courseName, age);
         return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<Student> update(@RequestBody Student student){
-        return new ResponseEntity<>(this.service.updateStudentById(student), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Student> deleteById(@PathVariable int id){
-        this.service.deleteStudentById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PostMapping("/addCourse/{id}")
-    public ResponseEntity<Student> addCourseToStudent(@PathVariable int id, @RequestBody Course course){
-        Student student = this.service.addCourse(id, course);
-        if(student==null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> addCourseToStudent(@PathVariable int id, @RequestBody Course course) {
+        try {
+            Student student = this.service.addCourse(id, course);
+            return new ResponseEntity<>(student, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-        return new ResponseEntity<>(student, HttpStatus.CREATED);
     }
 
     @PostMapping("/removeCourse/{id}")
-    public ResponseEntity<Student> removeCourseToStudent(@PathVariable int id, @RequestBody Course course){
-        Student student = this.service.removeCourse(id, course);
-        if(student==null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> removeCourseToStudent(@PathVariable int id, @RequestBody Course course) {
+        try {
+            Student student = this.service.removeCourse(id, course);
+            return new ResponseEntity<>(student, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
-        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity<Object> buildResponseEntity(ApiException exception) {
+        return new ResponseEntity<>(exception, exception.getStatus());
     }
 }

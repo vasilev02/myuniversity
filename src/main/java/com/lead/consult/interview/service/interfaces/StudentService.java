@@ -14,7 +14,7 @@ public interface StudentService {
 
     Optional<Student> getStudentById(int id);
 
-    void deleteStudentById(int id);
+    Optional<Student> deleteStudentById(int id);
 
     Student updateStudentById(Student student);
 

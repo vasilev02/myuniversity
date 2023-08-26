@@ -1,5 +1,6 @@
 package com.lead.consult.interview.service.implementations;
 
+import com.lead.consult.interview.messages.Message;
 import com.lead.consult.interview.model.Course;
 import com.lead.consult.interview.model.Student;
 import com.lead.consult.interview.repository.CourseRepository;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -37,28 +39,44 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Optional<Student> getStudentById(int id) {
-        return this.studentRepository.findById(id);
+        Optional<Student> studentFromDB = this.studentRepository.findById(id);
+        if (studentFromDB.isEmpty()) {
+            throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + id);
+        }
+        return studentFromDB;
     }
 
     @Override
-    public void deleteStudentById(int id) {
-        this.studentRepository.deleteById(id);
+    public Optional<Student> deleteStudentById(int id) {
+        Optional<Student> student = this.getStudentById(id);
+        if (student.isPresent()) {
+            this.studentRepository.deleteById(id);
+            return student;
+        }
+        throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + id);
     }
 
     @Override
     public Student updateStudentById(Student student) {
-        Optional<Student> student1 = this.studentRepository.findById(student.getId());
-        if (student1.isPresent()) {
-            Student temp = student1.get();
-            temp.setName(student.getName());
-            temp.setGrade(student.getGrade());
-            temp.setAge(student.getAge());
-            temp.setGroupName(student.getGroupName());
-            temp.setCourses(student.getCourses());
-            return this.studentRepository.saveAndFlush(temp);
-        } else {
-            throw new EntityNotFoundException("There is no course with ID:" + student.getId());
+        Optional<Student> studentToUpdate = this.studentRepository.findById(student.getId());
+        if (studentToUpdate.isPresent()) {
+            List<Course> courses = student.getCourses();
+            if (!courses.isEmpty()) {
+                for (int i = 0; i < courses.size(); i++) {
+                    if (!this.checkIfCourseExist(courses.get(i))) {
+                        throw new EntityNotFoundException(Message.ADDING_NO_EXISTING_COURSE_TO_STUDENT);
+                    }
+                }
+            }
+            Student student1 = studentToUpdate.get();
+            student1.setName(student.getName());
+            student1.setGrade(student.getGrade());
+            student1.setAge(student.getAge());
+            student1.setGroupName(student.getGroupName());
+            student1.setCourses(courses);
+            return this.studentRepository.saveAndFlush(student1);
         }
+        throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + student.getId());
     }
 
     @Override
@@ -93,14 +111,14 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student addCourse(int id, Course course) {
-        if(!this.checkIfCourseExist(course)){
-            return null;
+        if (!this.checkIfCourseExist(course)) {
+            throw new EntityNotFoundException(Message.ADDING_NO_EXISTING_COURSE_TO_STUDENT);
         }
         Course courseToAdd = this.courseRepository.findCourseByNameAndType(course.getName(), course.getType());
 
         Optional<Student> studentCheck = this.getStudentById(id);
-        if(studentCheck.isEmpty()){
-            return null;
+        if (studentCheck.isEmpty()) {
+            throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + id);
         }
 
         Student student = this.getStudentById(id).get();
@@ -108,8 +126,8 @@ public class StudentServiceImpl implements StudentService {
 
         for (int i = 0; i < courses.size(); i++) {
             Course currentCourse = courses.get(i);
-            if(currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())){
-                return null;
+            if (currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())) {
+                throw new IllegalArgumentException(Message.ADDING_EXISTING_COURSE_TO_STUDENT);
             }
         }
         courses.add(courseToAdd);
@@ -124,14 +142,14 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student removeCourse(int id, Course course) {
-        if(!this.checkIfCourseExist(course)){
-            return null;
+        if (!this.checkIfCourseExist(course)) {
+            throw new EntityNotFoundException(Message.REMOVING_EXISTING_COURSE_TO_STUDENT);
         }
         Course courseToRemove = this.courseRepository.findCourseByNameAndType(course.getName(), course.getType());
 
         Optional<Student> studentCheck = this.getStudentById(id);
-        if(studentCheck.isEmpty()){
-            return null;
+        if (studentCheck.isEmpty()) {
+            throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + id);
         }
 
         Student student = this.getStudentById(id).get();
@@ -139,7 +157,7 @@ public class StudentServiceImpl implements StudentService {
 
         for (int i = 0; i < courses.size(); i++) {
             Course currentCourse = courses.get(i);
-            if(currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())){
+            if (currentCourse.getName().equals(course.getName()) && currentCourse.getType().equals(course.getType())) {
                 courses.remove(courseToRemove);
                 courseToRemove.getStudents().remove(student);
                 courseRepository.saveAndFlush(courseToRemove);
@@ -150,8 +168,8 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
-    private boolean checkIfCourseExist(Course course){
-        if(this.courseRepository.findCourseByNameAndType(course.getName(), course.getType()) == null){
+    private boolean checkIfCourseExist(Course course) {
+        if (this.courseRepository.findCourseByNameAndType(course.getName(), course.getType()) == null) {
             return false;
         }
         return true;

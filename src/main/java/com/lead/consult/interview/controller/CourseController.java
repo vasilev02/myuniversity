@@ -24,53 +24,53 @@ public class CourseController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Course>> getCourses(){
+    public ResponseEntity<List<Course>> getCourses() {
         return new ResponseEntity<>(this.service.getAllCourses(), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Object> create(@RequestBody Course course){
+    public ResponseEntity<Object> create(@RequestBody Course course) {
         try {
             Course courseToAdd = this.service.createCourse(course);
             return new ResponseEntity<>(courseToAdd, HttpStatus.CREATED);
-        }catch (Exception e){
+        } catch (Exception e) {
             return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable int id){
+    public ResponseEntity<Object> getById(@PathVariable int id) {
         try {
             Optional<Course> course = this.service.getCourseById(id);
             return new ResponseEntity<>(course.get(), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable int id){
+    public ResponseEntity<Object> deleteById(@PathVariable int id) {
         try {
             Optional<Course> course = this.service.deleteCourseById(id);
-            return new ResponseEntity<>(course.get(),HttpStatus.OK);
-        }catch (Exception e) {
+            return new ResponseEntity<>(course.get(), HttpStatus.OK);
+        } catch (Exception e) {
             return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody Course course){
+    public ResponseEntity<Object> update(@RequestBody Course course) {
         try {
             Course courseToUpdate = this.service.update(course);
             return new ResponseEntity<>(courseToUpdate, HttpStatus.CREATED);
-        }catch (Exception e){
+        } catch (Exception e) {
             return buildResponseEntity(new ApiException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @GetMapping("/filterByType")
     @ResponseBody
-    public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type){
+    public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type) {
         return new ResponseEntity<>(this.service.getCoursesByType(type), HttpStatus.OK);
     }
 
