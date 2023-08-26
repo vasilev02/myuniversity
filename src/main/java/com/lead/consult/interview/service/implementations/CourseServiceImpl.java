@@ -55,7 +55,7 @@ public class CourseServiceImpl implements CourseService {
             temp.setName(course.getName());
             return this.repository.saveAndFlush(temp);
         }
-        return null;
+        throw new EntityNotFoundException("There is no course in the database with that ID - " + course.getId());
     }
 
     @Override
