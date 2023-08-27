@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * TeacherServiceImpl is class which implement all methods from interface TeacherService.
+ * Here we create the business logic regarding Teacher class.
+ */
 @Service
 public class TeacherServiceImpl implements TeacherService {
 

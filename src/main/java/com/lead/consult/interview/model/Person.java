@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Abstract class which provide all shared properties to the children.
+ */
 @Data
 @MappedSuperclass
 @NoArgsConstructor

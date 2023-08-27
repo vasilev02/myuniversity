@@ -6,6 +6,9 @@ import com.lead.consult.interview.model.Teacher;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * TeacherService is interface which give us the methods which are implemented by TeacherServiceImpl.
+ */
 public interface TeacherService {
 
     List<Teacher> getAllTeachers();

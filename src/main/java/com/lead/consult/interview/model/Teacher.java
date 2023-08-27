@@ -6,6 +6,9 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Teacher is on of the main entity we'll be using to manipulate through the application.
+ */
 @Data
 @Entity
 @NoArgsConstructor

@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+/**
+ * CourseServiceImpl is class which implement all methods from interface CourseService.
+ * Here we create the business logic regarding Course class.
+ */
 @Service
 public class CourseServiceImpl implements CourseService {
 

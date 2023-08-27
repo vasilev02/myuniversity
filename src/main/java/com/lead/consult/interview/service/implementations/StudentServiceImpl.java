@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * StudentServiceImpl is class which implement all methods from interface StudentService.
+ * Here we create the business logic regarding Student class.
+ */
 @Service
 public class StudentServiceImpl implements StudentService {
 

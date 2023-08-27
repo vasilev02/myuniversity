@@ -6,6 +6,9 @@ import com.lead.consult.interview.model.CourseType;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * CourseService is interface which give us the methods which are implemented by CourseServiceImpl.
+ */
 public interface CourseService {
 
     List<Course> getAllCourses();

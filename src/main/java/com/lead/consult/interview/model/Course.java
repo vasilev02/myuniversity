@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Course is on of the main entity we'll be using to manipulate through the application.
+ */
 @Data
 @Entity
 @NoArgsConstructor

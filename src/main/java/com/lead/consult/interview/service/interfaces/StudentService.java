@@ -6,6 +6,9 @@ import com.lead.consult.interview.model.Student;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * StudentService is interface which give us the methods which are implemented by StudentServiceImpl.
+ */
 public interface StudentService {
 
     List<Student> getAllStudents();

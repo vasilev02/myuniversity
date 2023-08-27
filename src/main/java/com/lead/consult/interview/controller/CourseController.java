@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * CourseController class is responsible for processing incoming REST API requests.
+ *
+ * After request being invoked, the controller methods starts to process the web
+ * request by interacting with the service layer in CourseService to complete the work that needs to be done.
+ */
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -23,11 +29,23 @@ public class CourseController {
         this.service = service;
     }
 
+    /**
+     * The method is used to get all courses from the database.
+     *
+     * @return a list of courses
+     */
     @GetMapping()
     public ResponseEntity<List<Course>> getCourses() {
         return new ResponseEntity<>(this.service.getAllCourses(), HttpStatus.OK);
     }
 
+    /**
+     *The method is used to create course and save it to the database with ID which is auto incremented starting with 1.
+     *
+     * @param course consist of type and name
+     * @return course
+     * @throws IllegalArgumentException
+     */
     @PostMapping()
     public ResponseEntity<Object> create(@RequestBody Course course) {
         try {
@@ -38,6 +56,13 @@ public class CourseController {
         }
     }
 
+    /**
+     *The method is used to get course from the database by providing ID.
+     *
+     * @param id unique integer to identify the course
+     * @return object either course or handled exception
+     * @throws jakarta.persistence.EntityNotFoundException
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable int id) {
         try {
@@ -48,6 +73,13 @@ public class CourseController {
         }
     }
 
+    /**
+     *The method is used to delete course from the database by providing ID.
+     *
+     * @param id unique integer to identify the course
+     * @return object either course or handled exception
+     * @throws jakarta.persistence.EntityNotFoundException
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable int id) {
         try {
@@ -58,6 +90,13 @@ public class CourseController {
         }
     }
 
+    /**
+     *The method is used to update course from the database by providing ID.
+     *
+     * @param course consist of id, type and name
+     * @return course
+     * @throws jakarta.persistence.EntityNotFoundException
+     */
     @PostMapping("/update")
     public ResponseEntity<Object> update(@RequestBody Course course) {
         try {
@@ -68,12 +107,24 @@ public class CourseController {
         }
     }
 
+    /**
+     *The method is used to get courses from DB by giving filter with type(MAIN or SECONDARY).
+     *
+     * @param type enum which can either MAIN or SECONDARY
+     * @return list of courses
+     */
     @GetMapping("/filterByType")
     @ResponseBody
     public ResponseEntity<List<Course>> getAllByType(@RequestParam CourseType type) {
         return new ResponseEntity<>(this.service.getCoursesByType(type), HttpStatus.OK);
     }
 
+    /**
+     *The method is used to build response if we get any exception throughout our logic.
+     *
+     * @param exception of any type
+     * @return ResponseEntity of Object
+     */
     private ResponseEntity<Object> buildResponseEntity(ApiException exception) {
         return new ResponseEntity<>(exception, exception.getStatus());
     }

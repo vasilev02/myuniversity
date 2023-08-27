@@ -1,5 +1,8 @@
 package com.lead.consult.interview.messages;
 
+/**
+ * Message is simple class which holds all messages when we throw exceptions throughout our application.
+ */
 public class Message {
 
     private Message() {
