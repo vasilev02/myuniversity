@@ -17,6 +17,7 @@ public class Course {
         this.type = type;
         this.name = name;
         this.students = new ArrayList<>();
+        this.teachers = new ArrayList<>();
     }
 
     @Id
@@ -32,5 +33,9 @@ public class Course {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Student> students;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Teacher> teachers;
 
 }

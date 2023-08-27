@@ -65,26 +65,26 @@ public class StudentController {
 
     @GetMapping("/getByCourseName")
     public ResponseEntity<List<Student>> getByCourseName(@RequestParam String courseName) {
-        List<Student> studentsByCourseName = this.service.getStudentsByCourseName(courseName);
-        return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
+        List<Student> dataResult = this.service.getStudentsByCourseName(courseName);
+        return new ResponseEntity<>(dataResult, HttpStatus.OK);
     }
 
     @GetMapping("/getByGroupName")
     public ResponseEntity<List<Student>> getByGroupName(@RequestParam String groupName) {
-        List<Student> studentsByCourseName = this.service.getStudentsByGroupName(groupName);
-        return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
+        List<Student> dataResult = this.service.getStudentsByGroupName(groupName);
+        return new ResponseEntity<>(dataResult, HttpStatus.OK);
     }
 
     @GetMapping("/getByCourseAndGroupName")
     public ResponseEntity<List<Student>> getByCourseAndGroupNames(@RequestParam String courseName, @RequestParam String groupName) {
-        List<Student> studentsByCourseName = this.service.getStudentsByCourseAndGroupNames(courseName, groupName);
-        return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
+        List<Student> dataResult = this.service.getStudentsByCourseAndGroupNames(courseName, groupName);
+        return new ResponseEntity<>(dataResult, HttpStatus.OK);
     }
 
     @GetMapping("/getByCourseNameAndAge")
     public ResponseEntity<List<Student>> getByCourseNameAndAge(@RequestParam String courseName, @RequestParam int age) {
-        List<Student> studentsByCourseName = this.service.getStudentsByCourseNameAndAge(courseName, age);
-        return new ResponseEntity<>(studentsByCourseName, HttpStatus.OK);
+        List<Student> dataResult = this.service.getStudentsByCourseNameAndAge(courseName, age);
+        return new ResponseEntity<>(dataResult, HttpStatus.OK);
     }
 
     @PostMapping("/addCourse/{id}")
@@ -98,7 +98,7 @@ public class StudentController {
     }
 
     @PostMapping("/removeCourse/{id}")
-    public ResponseEntity<Object> removeCourseToStudent(@PathVariable int id, @RequestBody Course course) {
+    public ResponseEntity<Object> removeCourseFromStudent(@PathVariable int id, @RequestBody Course course) {
         try {
             Student student = this.service.removeCourse(id, course);
             return new ResponseEntity<>(student, HttpStatus.BAD_REQUEST);

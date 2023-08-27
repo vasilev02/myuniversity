@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -58,8 +57,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student updateStudentById(Student student) {
-        Optional<Student> studentToUpdate = this.studentRepository.findById(student.getId());
-        if (studentToUpdate.isPresent()) {
+        Optional<Student> studentFromDB = this.studentRepository.findById(student.getId());
+        if (studentFromDB.isPresent()) {
             List<Course> courses = student.getCourses();
             if (!courses.isEmpty()) {
                 for (int i = 0; i < courses.size(); i++) {
@@ -68,13 +67,13 @@ public class StudentServiceImpl implements StudentService {
                     }
                 }
             }
-            Student student1 = studentToUpdate.get();
-            student1.setName(student.getName());
-            student1.setGrade(student.getGrade());
-            student1.setAge(student.getAge());
-            student1.setGroupName(student.getGroupName());
-            student1.setCourses(courses);
-            return this.studentRepository.saveAndFlush(student1);
+            Student studentToUpdate = studentFromDB.get();
+            studentToUpdate.setName(student.getName());
+            studentToUpdate.setGrade(student.getGrade());
+            studentToUpdate.setAge(student.getAge());
+            studentToUpdate.setGroupName(student.getGroupName());
+            studentToUpdate.setCourses(student.getCourses());
+            return this.studentRepository.saveAndFlush(studentToUpdate);
         }
         throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + student.getId());
     }

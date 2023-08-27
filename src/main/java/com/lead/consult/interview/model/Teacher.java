@@ -21,7 +21,7 @@ public class Teacher extends Person {
     @Column(name = "salary", nullable = false)
     private double salary;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Course> courses;
 
 }
