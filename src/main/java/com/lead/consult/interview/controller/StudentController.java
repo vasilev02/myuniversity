@@ -55,7 +55,7 @@ public class StudentController {
      *
      * @param id unique integer to identify the student
      * @return object either student or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when student does not exist
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable int id) {
@@ -70,9 +70,9 @@ public class StudentController {
     /**
      *The method is used to delete student from the database by providing ID.
      *
-     * @param id unique integer to identify the course
+     * @param id unique integer to identify the student
      * @return object either student or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when student does not exist
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable int id) {
@@ -89,7 +89,7 @@ public class StudentController {
      *
      * @param student consist of id, name, age, groupName, grade, courses
      * @return object either student or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when student or course does not exist
      */
     @PostMapping("/update")
     public ResponseEntity<Object> update(@RequestBody Student student) {
@@ -157,7 +157,7 @@ public class StudentController {
      * @param id
      * @param course
      * @return object either student or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when student or course does not exist
      */
     @PostMapping("/addCourse/{id}")
     public ResponseEntity<Object> addCourseToStudent(@PathVariable int id, @RequestBody Course course) {
@@ -175,7 +175,7 @@ public class StudentController {
      * @param id
      * @param course
      * @return object either student or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when student or course does not exist
      */
     @PostMapping("/removeCourse/{id}")
     public ResponseEntity<Object> removeCourseFromStudent(@PathVariable int id, @RequestBody Course course) {

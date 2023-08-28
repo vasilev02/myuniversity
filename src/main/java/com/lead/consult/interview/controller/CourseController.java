@@ -44,7 +44,7 @@ public class CourseController {
      *
      * @param course consist of type and name
      * @return course
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException when we try to create the same course
      */
     @PostMapping()
     public ResponseEntity<Object> create(@RequestBody Course course) {
@@ -61,7 +61,7 @@ public class CourseController {
      *
      * @param id unique integer to identify the course
      * @return object either course or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when course does not exist
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable int id) {
@@ -78,7 +78,7 @@ public class CourseController {
      *
      * @param id unique integer to identify the course
      * @return object either course or handled exception
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when course does not exist
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable int id) {
@@ -95,7 +95,8 @@ public class CourseController {
      *
      * @param course consist of id, type and name
      * @return course
-     * @throws jakarta.persistence.EntityNotFoundException
+     * @throws jakarta.persistence.EntityNotFoundException when course does not exist
+     * @throws IllegalArgumentException when we try to update course with identical props
      */
     @PostMapping("/update")
     public ResponseEntity<Object> update(@RequestBody Course course) {

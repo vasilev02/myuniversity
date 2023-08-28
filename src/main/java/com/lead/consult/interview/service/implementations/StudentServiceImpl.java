@@ -30,16 +30,34 @@ public class StudentServiceImpl implements StudentService {
         this.courseRepository = courseRepository;
     }
 
+    /**
+     * The method is used to get all students from the database.
+     *
+     * @return a list of students
+     */
     @Override
     public List<Student> getAllStudents() {
         return this.studentRepository.findAll();
     }
 
+    /**
+     *The method is used to create student and save it to the database with ID which is auto incremented starting with 1.
+     *
+     * @param student consist of name, age, groupName, grade, courses
+     * @return student object
+     */
     @Override
     public Student createStudent(Student student) {
         return this.studentRepository.saveAndFlush(student);
     }
 
+    /**
+     *The method is used to get student from the database by providing ID.
+     *
+     * @param id unique integer to identify the student
+     * @return student object
+     * @throws jakarta.persistence.EntityNotFoundException when student does not exist
+     */
     @Override
     public Optional<Student> getStudentById(int id) {
         Optional<Student> studentFromDB = this.studentRepository.findById(id);
@@ -49,6 +67,13 @@ public class StudentServiceImpl implements StudentService {
         return studentFromDB;
     }
 
+    /**
+     *The method is used to delete student from the database by providing ID.
+     *
+     * @param id unique integer to identify the student
+     * @return student object
+     * @throws jakarta.persistence.EntityNotFoundException when student does not exist
+     */
     @Override
     public Optional<Student> deleteStudentById(int id) {
         Optional<Student> student = this.getStudentById(id);
@@ -59,6 +84,13 @@ public class StudentServiceImpl implements StudentService {
         throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + id);
     }
 
+    /**
+     *The method is used to update student from the database by providing ID.
+     *
+     * @param student consist of id, name, age, groupName, grade, courses
+     * @return student object
+     * @throws jakarta.persistence.EntityNotFoundException when student or course does not exist
+     */
     @Override
     public Student updateStudentById(Student student) {
         Optional<Student> studentFromDB = this.studentRepository.findById(student.getId());
@@ -82,6 +114,12 @@ public class StudentServiceImpl implements StudentService {
         throw new EntityNotFoundException(Message.NO_STUDENT_IN_DATABASE + student.getId());
     }
 
+    /**
+     *The method is used to get students from the database by providing name of course.
+     *
+     * @param courseName
+     * @return list of Student objects
+     */
     @Override
     public List<Student> getStudentsByCourseName(String courseName) {
         return this.getAllStudents()
@@ -89,6 +127,12 @@ public class StudentServiceImpl implements StudentService {
                 .filter(student -> student.getCourses().stream().anyMatch(entry -> entry.getName().equals(courseName))).toList();
     }
 
+    /**
+     *The method is used to get students from the database by providing name of group.
+     *
+     * @param groupName
+     * @return list of Student objects
+     */
     @Override
     public List<Student> getStudentsByGroupName(String groupName) {
         return this.getAllStudents()
@@ -96,6 +140,13 @@ public class StudentServiceImpl implements StudentService {
                 .filter(student -> student.getGroupName().equals(groupName)).toList();
     }
 
+    /**
+     *The method is used to get students from the database by providing name of course and group.
+     *
+     * @param courseName
+     * @param groupName
+     * @return list of Student objects
+     */
     @Override
     public List<Student> getStudentsByCourseAndGroupNames(String courseName, String groupName) {
         Predicate<Student> studentPredicate = e -> e.getGroupName().equals(groupName) && e.getCourses().stream().
@@ -105,6 +156,13 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
+    /**
+     *The method is used to get students from the database by providing name of course and age.
+     *
+     * @param courseName
+     * @param age
+     * @return list of Student objects
+     */
     @Override
     public List<Student> getStudentsByCourseNameAndAge(String courseName, Integer age) {
         Predicate<Student> studentPredicate = e -> e.getAge() == age && e.getCourses().stream().
@@ -112,6 +170,14 @@ public class StudentServiceImpl implements StudentService {
         return this.getAllStudents().stream().filter(studentPredicate).toList();
     }
 
+    /**
+     *The method is used to add course to student.
+     *
+     * @param id
+     * @param course
+     * @return student object
+     * @throws jakarta.persistence.EntityNotFoundException when student or course does not exist
+     */
     @Override
     public Student addCourse(int id, Course course) {
         if (!this.checkIfCourseExist(course)) {
@@ -143,6 +209,14 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
+    /**
+     *The method is used to remove course from student.
+     *
+     * @param id
+     * @param course
+     * @return student object
+     * @throws jakarta.persistence.EntityNotFoundException when student ot course does not exist
+     */
     @Override
     public Student removeCourse(int id, Course course) {
         if (!this.checkIfCourseExist(course)) {
@@ -171,6 +245,12 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
+    /**
+     *The method is used to check if course exist in the database.
+     *
+     * @param course
+     * @return true or false
+     */
     private boolean checkIfCourseExist(Course course) {
         if (this.courseRepository.findCourseByNameAndType(course.getName(), course.getType()) == null) {
             return false;

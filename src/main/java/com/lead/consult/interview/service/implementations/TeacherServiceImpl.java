@@ -36,11 +36,24 @@ public class TeacherServiceImpl implements TeacherService {
         return this.teacherRepository.findAll();
     }
 
+    /**
+     *The method is used to create teacher and save it to the database with ID which is auto incremented starting with 1.
+     *
+     * @param teacher consist of name, age, groupName, salary, courses
+     * @return teacher object
+     */
     @Override
     public Teacher createTeacher(Teacher teacher) {
         return this.teacherRepository.saveAndFlush(teacher);
     }
 
+    /**
+     *The method is used to get teacher from the database by providing ID.
+     *
+     * @param id unique integer to identify the student
+     * @return teacher object
+     * @throws jakarta.persistence.EntityNotFoundException when teacher does not exist
+     */
     @Override
     public Optional<Teacher> getTeacherById(int id) {
         Optional<Teacher> teacherFromDB = this.teacherRepository.findById(id);
@@ -50,6 +63,13 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherFromDB;
     }
 
+    /**
+     *The method is used to delete teacher from the database by providing ID.
+     *
+     * @param id unique integer to identify the course
+     * @return teacher object
+     * @throws jakarta.persistence.EntityNotFoundException when teacher does not exist
+     */
     @Override
     public Optional<Teacher> deleteTeacherById(int id) {
         Optional<Teacher> teacher = this.getTeacherById(id);
@@ -60,6 +80,13 @@ public class TeacherServiceImpl implements TeacherService {
         throw new EntityNotFoundException(Message.NO_TEACHER_IN_DATABASE + id);
     }
 
+    /**
+     *The method is used to update teacher from the database by providing ID.
+     *
+     * @param teacher consist of id, name, age, groupName, salary, courses
+     * @return teacher object
+     * @throws jakarta.persistence.EntityNotFoundException when teacher does not exist
+     */
     @Override
     public Teacher updateTeacherById(Teacher teacher) {
         Optional<Teacher> teacherFromDB = this.teacherRepository.findById(teacher.getId());
@@ -83,6 +110,12 @@ public class TeacherServiceImpl implements TeacherService {
         throw new EntityNotFoundException(Message.NO_TEACHER_IN_DATABASE + teacher.getId());
     }
 
+    /**
+     *The method is used to get teachers from the database by providing name of course.
+     *
+     * @param courseName
+     * @return list of Teacher objects
+     */
     @Override
     public List<Teacher> getTeachersByCourseName(String courseName) {
         return this.getAllTeachers()
@@ -90,6 +123,12 @@ public class TeacherServiceImpl implements TeacherService {
                 .filter(teacher -> teacher.getCourses().stream().anyMatch(entry -> entry.getName().equals(courseName))).toList();
     }
 
+    /**
+     *The method is used to get teachers from the database by providing name of group.
+     *
+     * @param groupName
+     * @return list of Teacher objects
+     */
     @Override
     public List<Teacher> getTeachersByGroupName(String groupName) {
         return this.getAllTeachers()
@@ -97,6 +136,13 @@ public class TeacherServiceImpl implements TeacherService {
                 .filter(teacher -> teacher.getGroupName().equals(groupName)).toList();
     }
 
+    /**
+     *The method is used to get teachers from the database by providing name of course and group.
+     *
+     * @param courseName
+     * @param groupName
+     * @return list of Teacher objects
+     */
     @Override
     public List<Teacher> getTeachersByCourseAndGroupNames(String courseName, String groupName) {
         Predicate<Teacher> teacherPredicate = e -> e.getGroupName().equals(groupName) && e.getCourses().stream().
@@ -105,6 +151,13 @@ public class TeacherServiceImpl implements TeacherService {
         return this.getAllTeachers().stream().filter(teacherPredicate).toList();
     }
 
+    /**
+     *The method is used to get teachers from the database by providing name of course and salary.
+     *
+     * @param courseName
+     * @param salary
+     * @return list of Teacher objects
+     */
     @Override
     public List<Teacher> getTeachersByCourseNameAndSalary(String courseName, double salary) {
         Predicate<Teacher> teacherPredicate = e -> e.getSalary() == salary && e.getCourses().stream().
@@ -112,12 +165,27 @@ public class TeacherServiceImpl implements TeacherService {
         return this.getAllTeachers().stream().filter(teacherPredicate).toList();
     }
 
+    /**
+     *The method is used to get teachers from the database by providing name of course and age.
+     *
+     * @param courseName
+     * @param age
+     * @return list of Teacher objects
+     */
     public List<Teacher> getTeachersByCourseNameAndAge(String courseName, int age) {
         Predicate<Teacher> teacherPredicate = e -> e.getAge() == age && e.getCourses().stream().
                 anyMatch(course -> course.getName().equals(courseName));
         return this.getAllTeachers().stream().filter(teacherPredicate).toList();
     }
 
+    /**
+     *The method is used to add course to teacher.
+     *
+     * @param id
+     * @param course
+     * @return teacher object
+     * @throws jakarta.persistence.EntityNotFoundException when teacher or course does not exist
+     */
     public Teacher addCourse(int id, Course course) {
         if (!this.checkIfCourseExist(course)) {
             throw new EntityNotFoundException(Message.ADDING_NO_EXISTING_COURSE_TO_TEACHER);
@@ -148,6 +216,14 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
+    /**
+     *The method is used to remove course from teacher.
+     *
+     * @param id
+     * @param course
+     * @return teacher object
+     * @throws jakarta.persistence.EntityNotFoundException when teacher or course does not exist
+     */
     @Override
     public Teacher removeCourse(int id, Course course) {
         if (!this.checkIfCourseExist(course)) {
@@ -176,6 +252,12 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
+    /**
+     *The method is used to check if course exist in the database.
+     *
+     * @param course
+     * @return true or false
+     */
     private boolean checkIfCourseExist(Course course) {
         if (this.courseRepository.findCourseByNameAndType(course.getName(), course.getType()) == null) {
             return false;
